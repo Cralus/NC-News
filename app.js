@@ -1,10 +1,30 @@
-const express = require('express')
+const express = require("express");
 const app = express();
-const {getTopics } = require('./controllers/topics.js')
+const { getTopics } = require("./controllers/topics.js");
+const { getArticlesById } = require("./controllers/articles.js");
 
-app.get('/api/topics', getTopics)
+app.get("/api/topics", getTopics);
+app.get("/api/articles/:article_id", getArticlesById);
 
-app.all('/*', (req, res) =>{
-    res.status(404).send({msg: 'Bad endpoint'})
+
+
+app.use((err, req, res, next) => {
+   
+    if(err.code === '22P02')
+    {
+     res.status(400).send({msg: 'Bad Request'})
+    } else {
+        next(err)
+    }
 })
-module.exports = app
+
+app.use((err, req, res, next) => {
+
+    res.status(err.status).send({ msg: err.msg });
+});
+
+app.all("/*", (req, res) => {
+  res.status(404).send({ msg: "Bad endpoint" });
+});
+
+module.exports = app;
