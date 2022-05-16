@@ -13,7 +13,7 @@ beforeEach(() => {
     return db.end();
   });
 
-describe("get request", () => {
+describe("/api/topics get request", () => {
     test("should respond with an array of topic objects", () => {
       return request(app)
         .get("/api/topics")
@@ -38,7 +38,7 @@ describe("get request", () => {
           });
         });
     });
-    test("should respond with a status of 400 and a message of bad endpoint if given a not implemented endpoint", () => {
+    test("should respond with a status of 404 and a message of bad endpoint if given a not implemented endpoint", () => {
         return request(app)
           .get("/api/nothingtodowithus")
           .expect(404)
