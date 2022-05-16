@@ -14,7 +14,7 @@ beforeEach(() => {
   });
 
 describe("/api/topics get request", () => {
-    test("should respond with an array of topic objects", () => {
+    test("should respond with a staus of 200 and an array of 3 topic objects", () => {
       return request(app)
         .get("/api/topics")
         .expect(200)
@@ -22,7 +22,7 @@ describe("/api/topics get request", () => {
           expect(topics).toHaveLength(3);
         });
     });
-    test("should respond with an array of topic objects each with a slug and a description property", () => {
+    test("should respond with a status of 200 and an array of topic objects each with a slug and a description property", () => {
       return request(app)
       .get("/api/topics")
         .expect(200)
@@ -38,7 +38,10 @@ describe("/api/topics get request", () => {
           });
         });
     });
-    test("should respond with a status of 404 and a message of bad endpoint if given a not implemented endpoint", () => {
+
+})
+describe("Bad endpoint request error handling", () => {
+        test("should respond with a status of 404 and a message of bad endpoint if given a not implemented endpoint", () => {
         return request(app)
           .get("/api/nothingtodowithus")
           .expect(404)
