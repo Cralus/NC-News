@@ -28,7 +28,6 @@ describe("/api/topics get request", () => {
         .expect(200)
         .then(({ body: { topics } }) => {
           topics.forEach((topic) => {
-              console.log(topic)
             expect(topic).toHaveProperty(
               "slug",                      
             );
