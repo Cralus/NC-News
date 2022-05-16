@@ -1,9 +1,9 @@
 const db = require('../db/connection');
 
-exports.fetchArticlesById = (parameter) => {
+exports.fetchArticlesById = (articleId) => {
     return db
     .query(
-        `SELECT * FROM articles WHERE article_id = $1`, [parameter.article_id]
+        `SELECT * FROM articles WHERE article_id = $1`, [articleId]
     ).then((response) => {
         if(!response.rows.length)
         {
