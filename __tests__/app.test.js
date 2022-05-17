@@ -104,7 +104,7 @@ describe("PATCH /api/articles/:article_id", () => {
         });
       });
   });
-  test('Should respond with a 400 error if given a request body with incorrect formatting of inc_votes', () => {
+  test('Should respond with a 400 error if given a request body with the wrong property name of inc_votes', () => {
     return request(app)
     .patch("/api/articles/1")
     .expect(400)
@@ -113,16 +113,16 @@ describe("PATCH /api/articles/:article_id", () => {
          expect(msg).toBe('Bad Request')
     })
   });
-  test('should respond with a 400 error if given an object with too many properties', () => {
+  test('should respond with a 400 error if given an object with an incorrect datatype as the value for inc_votes', () => {
     return request(app)
     .patch("/api/articles/1")
     .expect(400)
-    .send({ wrongName: 'hello' })
+    .send({ inc_votes: 'hello' })
     .then(({ body: { msg } }) => {
          expect(msg).toBe('Bad Request')
     })
   });
-  test('should respond with a 400 error if given an object with the inc_votes property but with the incorrect data type', () => {
+  test('should respond with a 400 error if given an object with two many properties as the request', () => {
     return request(app)
     .patch("/api/articles/1")
     .expect(400)
