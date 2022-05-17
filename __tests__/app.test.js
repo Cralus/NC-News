@@ -131,6 +131,24 @@ describe("PATCH /api/articles/:article_id", () => {
          expect(msg).toBe('Bad Request')
     })
   });
+  test('should respond with a 404 error if given an article id which doesnt exist', () => {
+    return request(app)
+    .patch("/api/articles/5468498")
+    .expect(404)
+    .send({ inc_votes: 10 })
+    .then(({ body: { msg } }) => {
+         expect(msg).toBe('Not Found')
+    })
+  });  
+  test("should return a status of 400 if article id isnt a number and a msg of bad request", () => {
+    return request(app)
+      .patch("/api/articles/notanumber")
+      .expect(400)
+      .send({ inc_votes: 10 })
+      .then(({ body: { msg } }) => {
+        expect(msg).toBe("Bad Request");
+      });
+  });
 });
 describe("Bad endpoint request error handling", () => {
   test("should respond with a status of 404 and a message of bad endpoint if given a not implemented endpoint", () => {
@@ -141,4 +159,5 @@ describe("Bad endpoint request error handling", () => {
         expect(msg).toBe("Bad endpoint");
       });
   });
+
 });

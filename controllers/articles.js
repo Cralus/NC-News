@@ -18,8 +18,7 @@ exports.patchArticlesById = (req, res, next) => {
         next({status: 400, msg: "Bad Request"})
     }
   const votesToIncrement = req.body.inc_votes;
-  fetchArticlesById(articleId)
-    .then((article) => updateArticlesById(article, votesToIncrement))
+    updateArticlesById(articleId, votesToIncrement)
     .then((article) => {
       res.status(200).send({ article });
     })
