@@ -13,7 +13,6 @@ exports.getArticlesById = (req, res, next) => {
 
 exports.patchArticlesById = (req, res, next) => {
   const articleId = req.params.article_id;
-    console.log(req.body)
     if(!req.body.hasOwnProperty('inc_votes') || Object.keys(req.body).length !== 1)
     {
         next({status: 400, msg: "Bad Request"})
