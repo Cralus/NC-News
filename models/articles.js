@@ -1,9 +1,10 @@
+const { response } = require('../app');
 const db = require('../db/connection');
 
 exports.fetchArticlesById = (articleId) => {
     return db
     .query(
-        `SELECT * FROM articles WHERE article_id = $1`, [articleId]
+        `SELECT * FROM articles WHERE article_id = $1;`, [articleId]
     ).then((response) => {
         if(!response.rows.length)
         {
@@ -12,3 +13,16 @@ exports.fetchArticlesById = (articleId) => {
         return response.rows[0]
     })
 }
+exports.updateArticlesById = (article, votes) => {
+    
+    return db.query(
+        `UPDATE articles SET votes = votes+$1 WHERE article_id = $2 RETURNING *;`, [votes, article]
+    ).then((article) => {    
+        
+        if(!article.rows.length)
+        {
+          return  Promise.reject({status: 404, msg: "Not Found"})
+        }
+        return article.rows[0]
+    })
+ }
