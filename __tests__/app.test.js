@@ -150,6 +150,19 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 });
+describe("/api/users get request", () => {
+    test("should respond with a staus of 200 and an array of 4 user objects and have the right property", () => {
+      return request(app)
+        .get("/api/users")
+        .expect(200)
+        .then(({ body: { users } }) => {
+          expect(users).toHaveLength(4)
+          users.forEach((user) => {
+            expect(user).toHaveProperty("username");
+          });
+    });
+  });
+}) 
 describe("Bad endpoint request error handling", () => {
   test("should respond with a status of 404 and a message of bad endpoint if given a not implemented endpoint", () => {
     return request(app)
