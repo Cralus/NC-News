@@ -4,7 +4,7 @@ const testData = require("../db/data/test-data");
 const db = require("../db/connection.js");
 const app = require("../app.js");
 const request = require("supertest");
-
+require('jest-sorted')
 beforeEach(() => {
   return seed(testData);
 });
@@ -180,6 +180,38 @@ describe('GET /api/articles/:id comment count functionality', () => {
         .then(({body: {article}}) => {
             expect(article).toHaveProperty('comment_count')
             expect(article.comment_count).toBe(0)            
+        })
+    });
+});
+describe('GET /api/articles', () => {
+    test('Should respond with a status code of 200 and an array of articles each with the expected properties within them', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body: {articles}}) => {
+            expect(articles).toHaveLength(12)
+            articles.forEach(article => {
+                expect(article).toEqual(expect.objectContaining({
+                    article_id: expect.any(Number),
+                    title: expect.any(String),
+                    topic: expect.any(String),
+                    author: expect.any(String),
+                    body: expect.any(String),
+                    created_at: expect.any(String), //There is a utility class tranlating a time stamp into date
+                    votes: expect.any(Number),
+                    comment_count: expect.any(Number)
+                }))
+            })
+        })
+    });
+    test('should respond with a status code of 200 and an array of articles sorted by date in descending order ', () => {
+        return request(app)
+        .get('/api/articles')
+        .expect(200)
+        .then(({body: {articles}})=> {
+            expect(articles).toBeSortedBy("created_at", {
+                descending: true,
+              });
         })
     });
 });
