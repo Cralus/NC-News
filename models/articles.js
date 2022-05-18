@@ -17,7 +17,6 @@ exports.fetchArticlesById = (articleId) => {
       if (!article) {
         return Promise.reject({ status: 404, msg: "Not Found" });
       }
-      console.log(article)
       return article;
     }
   );
