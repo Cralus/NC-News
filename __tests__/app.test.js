@@ -41,7 +41,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/1")
       .expect(200)
       .then(({ body: { article } }) => {
-        expect(article).toEqual({
+        expect(article).toEqual(expect.objectContaining({ // david inspired refactor
           article_id: 1,
           title: "Living in the shadow of a great man",
           topic: "mitch",
@@ -49,7 +49,7 @@ describe("GET /api/articles/:article_id", () => {
           body: "I find this existence challenging",
           created_at: "2020-07-09T20:11:00.000Z", //There is a utility class tranlating a time stamp into date
           votes: 100,
-        });
+        }),);
       });
   });
   test("should return a status of 404 not found when given an id that doesnt exist", () => {
@@ -163,6 +163,26 @@ describe("/api/users get request", () => {
     });
   });
 }) 
+describe('GET /api/articles/:id comment count functionality', () => {
+    test('should get respond with a status of 200 and an article by id with a comment count', () => {
+        return request(app)
+        .get('/api/articles/1')
+        .expect(200)
+        .then(({body: {article}}) => {
+            expect(article).toHaveProperty('comment_count')
+            expect(article.comment_count).toBe(11)            
+        })
+    });
+    test('should get respond with a status of 200 and an article by id with a comment count of 0 for an article with no comments', () => {
+        return request(app)
+        .get('/api/articles/2')
+        .expect(200)
+        .then(({body: {article}}) => {
+            expect(article).toHaveProperty('comment_count')
+            expect(article.comment_count).toBe(0)            
+        })
+    });
+});
 describe("Bad endpoint request error handling", () => {
   test("should respond with a status of 404 and a message of bad endpoint if given a not implemented endpoint", () => {
     return request(app)
