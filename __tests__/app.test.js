@@ -275,7 +275,62 @@ describe('POST /api/articles/:article_id/comments', () => {
                 }))
             
         })
+        
     });
+    test('should respond with a status code of 400 when given a bad article_id', () => {
+        return request(app)
+        .post('/api/articles/something/comments')
+        .expect(400)
+        .send({ username: 'butter_bridge', body: 'Thought provoking read!' })
+        .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+    })
+    test('should respond with a status code of 400 when given a article_id that doesnt exist', () => {
+        return request(app)
+        .post('/api/articles/1000000/comments')
+        .expect(400)// this has previously in others been a 404 but in this one it seems like it should be a 400 because its attempting to add something that cant be added
+        .send({ username: 'butter_bridge', body: 'Thought provoking read!' })
+        .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+    })
+    test('should respond with a status code of 400 when given a username that doesnt exist', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .expect(400)
+        .send({ username: 'someone', body: 'Thought provoking read!' })
+        .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+    })
+    test('should respond with a status code of 400 when given a object with too many properties', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .expect(400)
+        .send({ username: 'butter_bridge', body: 'Thought provoking read!', somethingelse: 234 })
+        .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+    })
+    test('should respond with a status code of 400 when given a object with too few properties', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .expect(400)
+        .send({ username: 'butter_bridge' })
+        .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+    })
+    test('should respond with a status code of 400 when given the wrong datatype for body', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .expect(400)
+        .send({ username: 'butter_bridge', body: 1 })
+        .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+    })
 
 });
 describe("Bad endpoint request error handling", () => {

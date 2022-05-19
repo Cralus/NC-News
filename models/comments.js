@@ -19,14 +19,19 @@ exports.fetchCommentsByArticleId = (articleId) => {
   );
 };
 exports.addCommentByArticleId = (comment, articleId) => {
-    console.log(articleId, comment.username, comment.body)
+    if(Object.keys(comment).length !== 2)
+    {
+        return Promise.reject({ status: 400, msg: "Bad Request" });
+    }
+    if(typeof comment.body !== 'string')
+    {
+        return Promise.reject({ status: 400, msg: "Bad Request" });
+    }
   return db
     .query(
       `INSERT INTO comments(author, body, article_id) VALUES($1, $2, $3) RETURNING*;`,
       [ comment.username, comment.body, articleId]
     ).then((response) => {
         return response.rows[0]
-    }).catch((error) => {
-        console.log(error)
-    });
+    })
 };
