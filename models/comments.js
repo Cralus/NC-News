@@ -19,7 +19,7 @@ exports.fetchCommentsByArticleId = (articleId) => {
   );
 };
 exports.addCommentByArticleId = (comment, articleId) => {
-    if(Object.keys(comment).length !== 2)
+    if(!comment.hasOwnProperty('username') || !comment.hasOwnProperty('body'))
     {
         return Promise.reject({ status: 400, msg: "Bad Request" });
     }

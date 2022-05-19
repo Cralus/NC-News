@@ -21,7 +21,7 @@ app.use((err, req, res, next) => {
     {
      res.status(400).send({msg: 'Bad Request'})
     } else if(err.code === '23503'){
-    res.status(400).send({msg: 'Bad Request'})
+    res.status(404).send({msg: 'Not Found'})
     }
     else {
         next(err)

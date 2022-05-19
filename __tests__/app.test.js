@@ -289,31 +289,22 @@ describe('POST /api/articles/:article_id/comments', () => {
     test('should respond with a status code of 400 when given a article_id that doesnt exist', () => {
         return request(app)
         .post('/api/articles/1000000/comments')
-        .expect(400)// this has previously in others been a 404 but in this one it seems like it should be a 400 because its attempting to add something that cant be added
+        .expect(404)
         .send({ username: 'butter_bridge', body: 'Thought provoking read!' })
         .then(({ body: { msg } }) => {
-            expect(msg).toBe("Bad Request");
+            expect(msg).toBe("Not Found");
           });
     })
-    test('should respond with a status code of 400 when given a username that doesnt exist', () => {
+    test('should respond with a status code of 404 when given a username that doesnt exist', () => {
         return request(app)
         .post('/api/articles/1/comments')
-        .expect(400)
+        .expect(404)
         .send({ username: 'someone', body: 'Thought provoking read!' })
         .then(({ body: { msg } }) => {
-            expect(msg).toBe("Bad Request");
+            expect(msg).toBe("Not Found");
           });
     })
-    test('should respond with a status code of 400 when given a object with too many properties', () => {
-        return request(app)
-        .post('/api/articles/1/comments')
-        .expect(400)
-        .send({ username: 'butter_bridge', body: 'Thought provoking read!', somethingelse: 234 })
-        .then(({ body: { msg } }) => {
-            expect(msg).toBe("Bad Request");
-          });
-    })
-    test('should respond with a status code of 400 when given a object with too few properties', () => {
+    test('should respond with a status code of 400 when given a object which is missing required feilds', () => {
         return request(app)
         .post('/api/articles/1/comments')
         .expect(400)
