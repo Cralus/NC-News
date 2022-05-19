@@ -3,11 +3,13 @@ const app = express();
 const { getTopics } = require("./controllers/topics.js");
 const { getArticlesById, patchArticlesById, getArticles} = require("./controllers/articles.js");
 const {getUsers} =require("./controllers/users")
+const {getCommentsByArticleId} = require('./controllers/comments')
 
 app.get("/api/topics", getTopics);
 app.get("/api/articles/:article_id", getArticlesById);
 app.get("/api/users", getUsers)
 app.get("/api/articles", getArticles);
+app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
 
 app.use(express.json())
 
