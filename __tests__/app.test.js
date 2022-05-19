@@ -241,6 +241,14 @@ describe('GET /api/articles/:article_id/comments', () => {
             expect(msg).toBe("Bad Request");
           });
     }); 
+    test("should return a status of 404 if article id is a number but doesnt exist and a msg of no response", () => {
+        return request(app)
+          .get("/api/articles/1000000/comments")
+          .expect(404)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Not Found");
+          });
+    }); 
    test('should respond with a status of 200 if an article exists but has no comments', () => {
         return request(app)
         .get("/api/articles/10/comments")
