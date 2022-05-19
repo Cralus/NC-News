@@ -215,6 +215,41 @@ describe('GET /api/articles', () => {
         })
     });
 });
+describe('GET /api/articles/:article_id/comments', () => {
+    test('Should respond with a status code of 200 and an array of comments which correspond to the article id and each have the expected properties', () => {
+        return request(app)
+        .get('/api/articles/1/comments')
+        .expect(200)
+        .then(({body: {comments}}) => {
+            expect(comments).toHaveLength(11)
+            comments.forEach(comment => {
+                expect(comment).toEqual(expect.objectContaining({
+                    comment_id: expect.any(Number),
+                    votes: expect.any(Number),  
+                    created_at: expect.any(String), //There is a utility class tranlating a time stamp into date
+                    author: expect.any(String),
+                    body: expect.any(String),
+                }))
+            })
+        })
+    });
+    test("should return a status of 400 if article id isnt a number and a msg of bad request", () => {
+        return request(app)
+          .get("/api/articles/notanumber/comments")
+          .expect(400)
+          .then(({ body: { msg } }) => {
+            expect(msg).toBe("Bad Request");
+          });
+    }); 
+   test('should respond with a status of 200 if an article exists but has no comments', () => {
+        return request(app)
+        .get("/api/articles/10/comments")
+        .expect(200)
+        .then(({ body: { comments } }) => {
+        expect(comments).toEqual([]);
+        });
+    });
+})
 describe("Bad endpoint request error handling", () => {
   test("should respond with a status of 404 and a message of bad endpoint if given a not implemented endpoint", () => {
     return request(app)
