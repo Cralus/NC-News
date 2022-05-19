@@ -18,3 +18,20 @@ exports.fetchCommentsByArticleId = (articleId) => {
     }
   );
 };
+exports.addCommentByArticleId = (comment, articleId) => {
+    if(!comment.hasOwnProperty('username') || !comment.hasOwnProperty('body'))
+    {
+        return Promise.reject({ status: 400, msg: "Bad Request" });
+    }
+    if(typeof comment.body !== 'string')
+    {
+        return Promise.reject({ status: 400, msg: "Bad Request" });
+    }
+  return db
+    .query(
+      `INSERT INTO comments(author, body, article_id) VALUES($1, $2, $3) RETURNING*;`,
+      [ comment.username, comment.body, articleId]
+    ).then((response) => {
+        return response.rows[0]
+    })
+};
