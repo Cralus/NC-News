@@ -258,6 +258,26 @@ describe('GET /api/articles/:article_id/comments', () => {
         });
     });
 })
+describe('POST /api/articles/:article_id/comments', () => {
+    test('should respond with a status code of 201 and the posted comment ', () => {
+        return request(app)
+        .post('/api/articles/1/comments')
+        .expect(201)
+        .send({ username: 'butter_bridge', body: 'Thought provoking read!' })
+        .then(({body: { comment }}) =>{
+                expect(comment).toEqual(expect.objectContaining({
+                    article_id: 1,
+                    comment_id: expect.any(Number),
+                    votes: 0,  
+                    created_at: expect.any(String), //There is a utility class tranlating a time stamp into date
+                    author: 'butter_bridge',
+                    body: 'Thought provoking read!',
+                }))
+            
+        })
+    });
+
+});
 describe("Bad endpoint request error handling", () => {
   test("should respond with a status of 404 and a message of bad endpoint if given a not implemented endpoint", () => {
     return request(app)
