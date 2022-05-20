@@ -1,5 +1,5 @@
 const { fetchArticlesById, updateArticlesById, fetchArticles } = require("../models/articles");
-
+const { checkTopicExists } = require('../models/topics.js')
 exports.getArticlesById = (req, res, next) => {
   const articleId = req.params.article_id;
  
@@ -29,8 +29,12 @@ exports.patchArticlesById = (req, res, next) => {
 };
 exports.getArticles = (req, res, next) => { 
   const query = req.query;
-  console.log(query)
-  fetchArticles(query.topic, query.sort_by, query.order).then((articles) => {
+  const promises = [fetchArticles(query.topic, query.sort_by, query.order)]
+ if(query.topic)
+  {
+    promises.push(checkTopicExists(query.topic))
+  }
+  Promise.all(promises).then(([articles]) => {
     res.status(200).send({ articles });
   }).catch((err)=>{
     next(err)

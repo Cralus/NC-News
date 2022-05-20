@@ -1,6 +1,7 @@
 const { response } = require("../app");
 const format = require('pg-format')
 const db = require("../db/connection");
+const articles = require("../db/data/test-data/articles");
 
 exports.fetchArticlesById = (articleId) => {
  return db.query(
@@ -49,6 +50,7 @@ exports.fetchArticles = (topic, sortBy= "created_at", orderBy= "DESC"  ) => {
   ];
   const orderByGreenlist = ["ASC", "asc", "DESC", "desc"];
   const queryVals = []
+ // let promises= new Array(2)
   if (!sortByGreenlist.includes(sortBy)) {
     return Promise.reject({ status: 400, msg: "Bad Request" });
   }
@@ -58,21 +60,24 @@ exports.fetchArticles = (topic, sortBy= "created_at", orderBy= "DESC"  ) => {
   }
   const orderByString = `ORDER BY articles.${sortBy} ${orderBy}`
   let topicString = ``
-
+  
   if(topic)
   {
     queryVals.push(topic);
     topicString = `WHERE topic = $1`;
   } 
-
-    return db.query(`SELECT articles.*, COUNT(comment_id) :: INT
+    
+    const articlesQuery = db.query(`SELECT articles.*, COUNT(comment_id) :: INT
     AS comment_count 
     FROM articles 
     LEFT JOIN comments
     ON articles.article_id = comments.article_id
     ${topicString}
     GROUP BY articles.article_id
-    ${orderByString};`, queryVals).then((articles)=>{
-        return articles.rows
+    ${orderByString};`, queryVals)
+
+  return  articlesQuery.then((articles) => {
+      return articles.rows
     })
+    
 }
