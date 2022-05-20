@@ -11,7 +11,6 @@ exports.fetchTopics = () => {
     })
 }
 exports.checkTopicExists = (topic) => {
-    console.log(topic)
     return db.query(`SELECT * FROM topics WHERE slug = $1`, [topic]).then((response)=>{
         if(response.rows.length === 0)
         {
