@@ -324,6 +324,71 @@ describe('POST /api/articles/:article_id/comments', () => {
     })
 
 });
+describe('add query functionality GET /api/articles ', () => {
+    test('Should respond with a an appropriately sorted array of articles', () => {
+        return request(app)
+        .get('/api/articles?sort_by=created_at&order=ASC')
+        .expect(200)
+        .then(({body: {articles}})=> {
+            expect(articles).toBeSortedBy("created_at", {
+                ascending: true,
+            });
+        });
+    });
+    test('Should respond with a an appropriately sorted array of articles when given a sort by which is not the default', () => {
+        return request(app)
+        .get('/api/articles?author=created_at')
+        .expect(200)
+        .then(({body: {articles}})=> {
+            expect(articles).toBeSortedBy("created_at", {
+                descending: true,
+            });
+        });
+    });
+    test('Should respond with a array of articles filtered by topic if given a topic query', () => {
+        return request(app)
+        .get('/api/articles?topic=cats')
+        .expect(200)
+        .then(({body: {articles}}) => {
+            expect(articles).toHaveLength(1)
+            expect(articles[0].topic).toEqual('cats')
+        })
+    })
+    test('should respond with a status of 200 if an topic does exist but has no articles should return an empty array', () => {
+        return request(app)
+        .get('/api/articles?topic=paper')
+        .expect(200)
+        .then(({body: {articles}}) => {
+            expect(articles).toHaveLength(0)
+        })
+    });
+     test('Should respond with a status of 404 if the requested topic doesnt exist', () => {
+         return request(app)
+         .get('/api/articles?topic=1')
+         .expect(404)
+        .then(({body: {msg}}) => {
+             expect(msg).toBe('Not Found')
+        
+         })
+     })
+    test('Should respond with a status 400 if a query has a invalid column name to sort by', () => {
+            return request(app)
+            .get('/api/articles?sort_by=nonsense')
+            .expect(400)
+            .then(({body: {msg}})=> {
+                expect(msg).toBe('Bad Request')
+            });
+    });
+    test('Should respond with a status 400 if a query has a invalid string to order by but a valid column name to sort by', () => {
+        return request(app)
+        .get('/api/articles?sort_by=author&order=notDesc')
+        .expect(400)
+        .then(({body: {msg}})=> {
+            expect(msg).toBe('Bad Request')
+        });
+
+});      
+})
 describe("Bad endpoint request error handling", () => {
   test("should respond with a status of 404 and a message of bad endpoint if given a not implemented endpoint", () => {
     return request(app)
