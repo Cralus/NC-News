@@ -2,6 +2,7 @@ const { fetchArticlesById, updateArticlesById, fetchArticles } = require("../mod
 
 exports.getArticlesById = (req, res, next) => {
   const articleId = req.params.article_id;
+ 
   fetchArticlesById(articleId)
     .then((article) => {
       res.status(200).send({ article });
@@ -26,8 +27,12 @@ exports.patchArticlesById = (req, res, next) => {
       next(err);
     });
 };
-exports.getArticles = (req, res) => {
-  fetchArticles().then((articles) => {
+exports.getArticles = (req, res, next) => { 
+  const query = req.query;
+  console.log(query)
+  fetchArticles(query.topic, query.sort_by, query.order).then((articles) => {
     res.status(200).send({ articles });
+  }).catch((err)=>{
+    next(err)
   })
 }
